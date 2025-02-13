@@ -1,0 +1,32 @@
+.react-responsive-modal-modal{
+  margin: 0 !important;
+  padding: 3rem !important;
+  width: 44% !important;
+  color: hsl(180, 11%, 93%) !important;
+  max-height: 80vh !important;
+  max-width: 80vw !important;
+  border-radius: 1rem !important;
+
+}
+
+.react-responsive-modal-closeButton {
+  top: 15px !important;
+  right: 15px !important;
+  padding: 0;
+}
+
+.wrapper {
+  width: 90%;
+  color: #b3b3b3;
+
+}
+
+.barCompleted {
+  background-color: lightblue;
+  width: 80%;
+}
+
+.label {
+  font-size: 20px;
+  color: hsl(0, 100%, 85%);
+}
