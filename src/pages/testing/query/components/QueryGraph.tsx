@@ -1,5 +1,6 @@
 import React, { useCallback, useRef, useState } from 'react';
 import { ForceGraph2D } from 'react-force-graph';
+import { ReactFlow } from '@xyflow/react';
 import { HiMagnifyingGlassMinus, HiMagnifyingGlassPlus } from 'react-icons/hi2';
 import { TbArrowsDiagonal } from 'react-icons/tb';
 
@@ -15,6 +16,9 @@ type GraphNode = {
   [key: string]: any;
 };
 
+type Node = { id: string, position: { x: number, y: number }, data: { label: string } };
+type Link = { id: string, source: string, target: string };
+
 type GraphLink = {
   source: string | GraphNode;
   target: string | GraphNode;
@@ -24,6 +28,10 @@ type GraphLink = {
 type GraphData = {
   nodes: GraphNode[];
   links: GraphLink[];
+};
+type GraphData2 = {
+  nodes: Node[];
+  links: Link[];
 };
 
 type QueryGraphProps = {
@@ -65,7 +73,7 @@ const QueryGraph: React.FC<QueryGraphProps> = ({
       'x', 'y', 'vx', 'vy', 'index',
       '__indexColor', 'color', 'id', 'size'
     ];
-    
+
     return Object.entries(node).reduce((acc: Record<string, any>, [key, value]) => {
       if (!excludedProps.includes(key) && value !== '' && value != null) {
         acc[key] = Array.isArray(value) ? value.filter(Boolean).join(', ') : value;
@@ -80,10 +88,10 @@ const QueryGraph: React.FC<QueryGraphProps> = ({
       const nodeRadius = FIXED_NODE_SIZE / globalScale;
       const label = node.name || node.label;
       const baseFontSize = Math.min(nodeRadius * 0.7, 16 / globalScale);
-      
+
       ctx.font = `${baseFontSize}px Sans-Serif`;
       ctx.fillStyle = getNodeColor(node);
-      
+
       ctx.beginPath();
       ctx.arc(node.x ?? 0, node.y ?? 0, nodeRadius, 0, 2 * Math.PI);
       ctx.fill();
@@ -176,12 +184,15 @@ const QueryGraph: React.FC<QueryGraphProps> = ({
           <HiMagnifyingGlassPlus className="h-5 w-5" />
         </button>
       </div>
-      
+
       <div className="absolute bottom-10 right-2 z-10">
         <TbArrowsDiagonal className="h-5 w-5" />
       </div>
 
-      <ForceGraph2D
+      <ReactFlow nodes={graphData.nodes.map((node: any, index) => { console.log(node); return { id: node.id, position: { x: (node.x + (index * 10)), y: (node.y + (index * 10)) }, data: { label: node.label } } })}
+        edges={graphData.links.map((link: any, index) => { return { id: index.toString(), source: link.source, target: link.target } })} />
+
+      {/* <ForceGraph2D
         ref={fgRef}
         graphData={graphData}
         nodeCanvasObject={nodeCanvasObject}
@@ -193,7 +204,7 @@ const QueryGraph: React.FC<QueryGraphProps> = ({
         width={975}
         height={500}
         enableNodeDrag={false}
-      />
+      /> */}
 
       {(hoveredNode || hoveredLink) && (
         <div

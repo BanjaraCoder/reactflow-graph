@@ -1,3 +1,5 @@
+import { ReactFlow } from '@xyflow/react';
+import "@xyflow/react/dist/style.css";
 import React, { useCallback, useRef, useState, useEffect } from 'react';
 import { ForceGraph2D } from 'react-force-graph';
 import {
@@ -46,11 +48,11 @@ interface TooltipPosition {
   y: number;
 }
 
-const GraphVisualization: React.FC<GraphVisualizationProps> = ({ 
-  data, 
-  isVisible, 
-  zoomLevel, 
-  relationships 
+const GraphVisualization: React.FC<GraphVisualizationProps> = ({
+  data,
+  isVisible,
+  zoomLevel,
+  relationships
 }) => {
   const fgRef = useRef<any>();
   const [hoveredNode, setHoveredNode] = useState<Node | null>(null);
@@ -186,66 +188,66 @@ const GraphVisualization: React.FC<GraphVisualizationProps> = ({
       );
     });
   }, []);
-    // Helper function to draw straight links
-    const drawStraightLink = (
-      ctx: CanvasRenderingContext2D,
-      sourcePos: { x: number, y: number },
-      targetPos: { x: number, y: number },
-      nodeSize: number
-    ) => {
-      const dx = targetPos.x - sourcePos.x;
-      const dy = targetPos.y - sourcePos.y;
-      const length = Math.sqrt(dx * dx + dy * dy);
-      
-      const unitDx = dx / length;
-      const unitDy = dy / length;
-    
-      const startPoint = {
-        x: sourcePos.x + unitDx * nodeSize,
-        y: sourcePos.y + unitDy * nodeSize,
-      };
-      const endPoint = {
-        x: targetPos.x - unitDx * (nodeSize + 5),
-        y: targetPos.y - unitDy * (nodeSize + 5),
-      };
-    
-      ctx.beginPath();
-      ctx.strokeStyle = 'rgba(128, 128, 128, 0.6)';
-      ctx.lineWidth = 1;
-      ctx.moveTo(startPoint.x, startPoint.y);
-      ctx.lineTo(endPoint.x, endPoint.y);
-      ctx.stroke();
-    
-      const angle = Math.atan2(dy, dx);
-      drawArrow(ctx, endPoint.x, endPoint.y, angle);
+  // Helper function to draw straight links
+  const drawStraightLink = (
+    ctx: CanvasRenderingContext2D,
+    sourcePos: { x: number, y: number },
+    targetPos: { x: number, y: number },
+    nodeSize: number
+  ) => {
+    const dx = targetPos.x - sourcePos.x;
+    const dy = targetPos.y - sourcePos.y;
+    const length = Math.sqrt(dx * dx + dy * dy);
+
+    const unitDx = dx / length;
+    const unitDy = dy / length;
+
+    const startPoint = {
+      x: sourcePos.x + unitDx * nodeSize,
+      y: sourcePos.y + unitDy * nodeSize,
     };
-    
-    // Helper function to draw arrows
-    const drawArrow = (
-      ctx: CanvasRenderingContext2D,
-      x: number,
-      y: number,
-      angle: number
-    ) => {
-      const arrowLength = 8;
-    
-      const arrowPoint1 = {
-        x: x - arrowLength * Math.cos(angle - Math.PI / 6),
-        y: y - arrowLength * Math.sin(angle - Math.PI / 6),
-      };
-      const arrowPoint2 = {
-        x: x - arrowLength * Math.cos(angle + Math.PI / 6),
-        y: y - arrowLength * Math.sin(angle + Math.PI / 6),
-      };
-    
-      ctx.beginPath();
-      ctx.fillStyle = 'rgba(128, 128, 128, 0.6)';
-      ctx.moveTo(x, y);
-      ctx.lineTo(arrowPoint1.x, arrowPoint1.y);
-      ctx.lineTo(arrowPoint2.x, arrowPoint2.y);
-      ctx.closePath();
-      ctx.fill();
+    const endPoint = {
+      x: targetPos.x - unitDx * (nodeSize + 5),
+      y: targetPos.y - unitDy * (nodeSize + 5),
     };
+
+    ctx.beginPath();
+    ctx.strokeStyle = 'rgba(128, 128, 128, 0.6)';
+    ctx.lineWidth = 1;
+    ctx.moveTo(startPoint.x, startPoint.y);
+    ctx.lineTo(endPoint.x, endPoint.y);
+    ctx.stroke();
+
+    const angle = Math.atan2(dy, dx);
+    drawArrow(ctx, endPoint.x, endPoint.y, angle);
+  };
+
+  // Helper function to draw arrows
+  const drawArrow = (
+    ctx: CanvasRenderingContext2D,
+    x: number,
+    y: number,
+    angle: number
+  ) => {
+    const arrowLength = 8;
+
+    const arrowPoint1 = {
+      x: x - arrowLength * Math.cos(angle - Math.PI / 6),
+      y: y - arrowLength * Math.sin(angle - Math.PI / 6),
+    };
+    const arrowPoint2 = {
+      x: x - arrowLength * Math.cos(angle + Math.PI / 6),
+      y: y - arrowLength * Math.sin(angle + Math.PI / 6),
+    };
+
+    ctx.beginPath();
+    ctx.fillStyle = 'rgba(128, 128, 128, 0.6)';
+    ctx.moveTo(x, y);
+    ctx.lineTo(arrowPoint1.x, arrowPoint1.y);
+    ctx.lineTo(arrowPoint2.x, arrowPoint2.y);
+    ctx.closePath();
+    ctx.fill();
+  };
   // Helper function to draw curved links
   const drawCurvedLink = (
     ctx: CanvasRenderingContext2D,
@@ -257,22 +259,22 @@ const GraphVisualization: React.FC<GraphVisualizationProps> = ({
     const dx = targetPos.x - sourcePos.x;
     const dy = targetPos.y - sourcePos.y;
     const length = Math.sqrt(dx * dx + dy * dy);
-  
+
     // Calculate control point for quadratic curve
     const midX = (sourcePos.x + targetPos.x) / 2;
     const midY = (sourcePos.y + targetPos.y) / 2;
-    
+
     // Calculate perpendicular offset for control point
     const perpX = -dy / length * curveOffset;
     const perpY = dx / length * curveOffset;
-    
+
     const controlX = midX + perpX;
     const controlY = midY + perpY;
-  
+
     // Calculate start and end points accounting for node size
     const unitDx = dx / length;
     const unitDy = dy / length;
-  
+
     const startPoint = {
       x: sourcePos.x + unitDx * nodeSize,
       y: sourcePos.y + unitDy * nodeSize,
@@ -281,7 +283,7 @@ const GraphVisualization: React.FC<GraphVisualizationProps> = ({
       x: targetPos.x - unitDx * (nodeSize + 5),
       y: targetPos.y - unitDy * (nodeSize + 5),
     };
-  
+
     // Draw the curved path
     ctx.beginPath();
     ctx.strokeStyle = 'rgba(128, 128, 128, 0.6)';
@@ -289,69 +291,69 @@ const GraphVisualization: React.FC<GraphVisualizationProps> = ({
     ctx.moveTo(startPoint.x, startPoint.y);
     ctx.quadraticCurveTo(controlX, controlY, endPoint.x, endPoint.y);
     ctx.stroke();
-  
+
     // Calculate angle for arrow at the curve end
     const endTangentX = endPoint.x - controlX;
     const endTangentY = endPoint.y - controlY;
     const arrowAngle = Math.atan2(endTangentY, endTangentX);
-    
+
     drawArrow(ctx, endPoint.x, endPoint.y, arrowAngle);
   };
 
-  function checkBidirectional(dataArray: any[],link: { target: any; source: any; }) {
+  function checkBidirectional(dataArray: any[], link: { target: any; source: any; }) {
     // Check if there's a matching reverse link in the data
-    const reverseLink = dataArray.find(item => 
-        item.source === link.target && 
-        item.target === link.source
+    const reverseLink = dataArray.find(item =>
+      item.source === link.target &&
+      item.target === link.source
     );
-    
+
     return {
-        isBidirectional: Boolean(reverseLink),
-        reverseLink: reverseLink || null
+      isBidirectional: Boolean(reverseLink),
+      reverseLink: reverseLink || null
     };
-}
+  }
   const linkCanvasObject = useCallback((link: Link, ctx: CanvasRenderingContext2D) => {
     const source = typeof link.source === 'object' ? link.source : { x: 0, y: 0 };
     const target = typeof link.target === 'object' ? link.target : { x: 0, y: 0 };
-    
+
     const sourcePos = { x: source.x || 0, y: source.y || 0 };
     const targetPos = { x: target.x || 0, y: target.y || 0 };
     const nodeSize = getNodeSize(typeof target === 'object' ? target : { type: '' });
-  
+
     // Handle self-referential links
     if (
       source === target ||
-      (typeof source === 'object' && typeof target === 'object' && 
-       source.id === target.id && link.label === 'SELF_REFERENCE')
+      (typeof source === 'object' && typeof target === 'object' &&
+        source.id === target.id && link.label === 'SELF_REFERENCE')
     ) {
       const radius = nodeSize * 1.2;
       const centerX = sourcePos.x + nodeSize * 1.5;
       const centerY = sourcePos.y;
       const startAngle = -Math.PI * 0.8;
       const endAngle = Math.PI * 0.8;
-  
+
       ctx.beginPath();
       ctx.strokeStyle = 'rgba(128, 128, 128, 0.6)';
       ctx.lineWidth = 1;
       ctx.arc(centerX, centerY, radius, startAngle, endAngle);
       ctx.stroke();
-  
-      drawArrow(ctx, 
+
+      drawArrow(ctx,
         centerX + radius * Math.cos(endAngle),
         centerY + radius * Math.sin(endAngle),
         endAngle + Math.PI / 2
       );
       return;
     }
-  
+
     const dx = targetPos.x - sourcePos.x;
     const dy = targetPos.y - sourcePos.y;
     const length = Math.sqrt(dx * dx + dy * dy);
-  
+
     if (length === 0) return;
-  
+
     // Check if there's a bidirectional link
-    const isBidirectional = checkBidirectional(data.links,link);
+    const isBidirectional = checkBidirectional(data.links, link);
     // console.log(data.links)
     if (isBidirectional.isBidirectional) {
       console.log("hjkhjk")
@@ -385,65 +387,65 @@ const GraphVisualization: React.FC<GraphVisualizationProps> = ({
     setTooltipPosition({ x: event.clientX, y: event.clientY });
   }, []);
 
-const handleLinkHover = useCallback((link: Link | null) => {
-  // First log the incoming link data
-  console.log('Hover link data:', link);
-  
-  if (!link) {
+  const handleLinkHover = useCallback((link: Link | null) => {
+    // First log the incoming link data
+    console.log('Hover link data:', link);
+
+    if (!link) {
+      setHoveredLink(null);
+      return;
+    }
+
+    // Log source and target information
+    console.log('Source:', link.source);
+    console.log('Target:', link.target);
+    console.log('Link label:', link.label);
+
+    // Extract source and target with better type checking
+    const sourceNode = typeof link.source === 'object' ? link.source : null;
+    const targetNode = typeof link.target === 'object' ? link.target : null;
+
+    // Log the extracted node information
+    console.log('Source node:', sourceNode);
+    console.log('Target node:', targetNode);
+
+    // Check for self-reference
+    const isSelfReference = sourceNode &&
+      targetNode &&
+      sourceNode.id === targetNode.id;
+
+    console.log('Is self reference:', isSelfReference);
+
+    if (isSelfReference) {
+      // For self-referential links, look for relationships where source and target are the same
+      const selfRelationship = relationships.find(rel =>
+        rel.source === sourceNode.type && rel.target === sourceNode.type
+      );
+
+      console.log('Found self relationship:', selfRelationship);
+
+      if (selfRelationship) {
+        setHoveredLink(selfRelationship.type);
+        return;
+      }
+    }
+
+    // For normal links
+    if (sourceNode && targetNode) {
+      const relationship = relationships.find(rel =>
+        rel.source === sourceNode.type && rel.target === targetNode.type
+      );
+
+      console.log('Found normal relationship:', relationship);
+
+      if (relationship) {
+        setHoveredLink(relationship.type);
+        return;
+      }
+    }
+
     setHoveredLink(null);
-    return;
-  }
-
-  // Log source and target information
-  console.log('Source:', link.source);
-  console.log('Target:', link.target);
-  console.log('Link label:', link.label);
-
-  // Extract source and target with better type checking
-  const sourceNode = typeof link.source === 'object' ? link.source : null;
-  const targetNode = typeof link.target === 'object' ? link.target : null;
-
-  // Log the extracted node information
-  console.log('Source node:', sourceNode);
-  console.log('Target node:', targetNode);
-
-  // Check for self-reference
-  const isSelfReference = sourceNode && 
-                         targetNode && 
-                         sourceNode.id === targetNode.id;
-
-  console.log('Is self reference:', isSelfReference);
-
-  if (isSelfReference) {
-    // For self-referential links, look for relationships where source and target are the same
-    const selfRelationship = relationships.find(rel => 
-      rel.source === sourceNode.type && rel.target === sourceNode.type
-    );
-
-    console.log('Found self relationship:', selfRelationship);
-
-    if (selfRelationship) {
-      setHoveredLink(selfRelationship.type);
-      return;
-    }
-  }
-
-  // For normal links
-  if (sourceNode && targetNode) {
-    const relationship = relationships.find(rel =>
-      rel.source === sourceNode.type && rel.target === targetNode.type
-    );
-
-    console.log('Found normal relationship:', relationship);
-
-    if (relationship) {
-      setHoveredLink(relationship.type);
-      return;
-    }
-  }
-
-  setHoveredLink(null);
-}, [relationships]);
+  }, [relationships]);
 
   const handleCopyContent = (content: any) => {
     navigator.clipboard.writeText(JSON.stringify(content));
@@ -462,8 +464,33 @@ const handleLinkHover = useCallback((link: Link | null) => {
           <HiMagnifyingGlassMinus size={20} />
         </button>
       </div>
+      {/* <div style={{ width: '100vw', height: '100vh' }}> */}
+      <ReactFlow nodes={data.nodes.map((node: any, index) => { console.log(node); return { id: node.id, position: { x: (node.x + (index * 10)), y: (node.y + (index * 10)) }, data: { label: node.label } } })}
+        edges={data.links.map((link: any, index) => { return { id: index.toString(), source: link.source, target: link.target } })} />
+      {/* <ReactFlow nodes={[
+          { id: "a", type: "input", position: { x: 0, y: 0 }, data: { label: "wire" } },
+          {
+            id: "b",
+            type: "position-logger",
+            position: { x: -100, y: 100 },
+            data: { label: "drag me!" },
+          },
+          { id: "c", position: { x: 100, y: 100 }, data: { label: "your ideas" } },
+          {
+            id: "d",
+            type: "output",
+            position: { x: 0, y: 200 },
+            data: { label: "with React Flow" },
+          },
+        ]}
+          edges={[
+            { id: "0", source: "a", target: "c", animated: true },
+            { id: "1", source: "b", target: "d" },
+            { id: "2", source: "c", target: "d", animated: true },
+          ]} /> */}
+      {/* </div> */}
 
-      <ForceGraph2D
+      {/* <ForceGraph2D
         ref={fgRef}
         graphData={data}
         nodeCanvasObject={nodeCanvasObject}
@@ -475,7 +502,7 @@ const handleLinkHover = useCallback((link: Link | null) => {
         cooldownTicks={100}
         d3VelocityDecay={0.9}
         onLinkHover={handleLinkHover}
-      />
+      /> */}
 
       {hoveredNode && (
         <div
