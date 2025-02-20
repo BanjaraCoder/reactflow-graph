@@ -65,6 +65,7 @@ const GraphExplorer: React.FC = () => {
   const [selectedProperties, setSelectedProperties] = useState<Record<string, string>>({});
   const [queryResult, setQueryResult] = useState<QueryResult | null>(null);
   const [graphData, setGraphData] = useState<GraphData | null>(null);
+  const [finalGraphData, setFinalGraphData] = useState<GraphData | null>(null);
   const [isGraphVisible, setIsGraphVisible] = useState(false);
   const [nodeProperties, setNodeProperties] = useState<Record<string, string[]>>({});
   const [relationships, setRelationships] = useState<Relationship[]>([]);
@@ -270,14 +271,18 @@ const GraphExplorer: React.FC = () => {
     }
   }, [selectedNode, selectedRelationships, nodeProperties]);
 
+  useEffect(() => {
+    setFinalGraphData(graphData);
+  }, [graphData]);
+
   const handleSearch = async () => {
     setError(null);
     const query = constructQuery(selectedProperties);
 
-    if (!query) {
-      setError('Query is empty');
-      return;
-    }
+    // if (!query) {
+    //   setError('Query is empty');
+    //   return;
+    // }
 
     try {
       const result = await runQuery(searchTerm);
@@ -398,7 +403,7 @@ const GraphExplorer: React.FC = () => {
           <div className='mt-4 flex justify-between'>
             <GraphVisualization
               relationships={relationships}
-              data={graphData}
+              data={finalGraphData ?? graphData}
               isVisible={isGraphVisible}
               zoomLevel={zoomLevel}
             />

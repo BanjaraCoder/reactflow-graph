@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { MdArrowBack } from 'react-icons/md';
 import { getColorClass } from './colormap';
 import Dots from '../../assets/Dots.svg';
+import useWindowDimensions from '../../lib/windowDimensions';
 
 // ColoredSearchTerm Component
 const ColoredSearchTerm = ({ searchTerm, onSearchTermChange }) => {
@@ -22,21 +23,22 @@ const ColoredSearchTerm = ({ searchTerm, onSearchTermChange }) => {
   }, [searchTerm]);
 
   const segments = searchTerm.split(' - ');
+  const { height, width } = useWindowDimensions();
 
   return (
     <div
       ref={containerRef}
-      className='flex items-center space-x-1 cursor-text origin-left'
+      className={`flex items-center cursor-text origin-left  overflow-auto px-0`}
       onClick={onSearchTermChange}
-      style={{ transform: `scale(${scale})` }}
+      // style={{ transform: `scale(${scale})` }}
     >
       {segments.map((segment, index) => (
-        <React.Fragment key={index}>
+        <div key={index} className={`mt-2`} >
           <span className={`px-1 rounded ${getColorClass(segment)} text-white`}>
             {segment}
           </span>
           {index < segments.length - 1 && <span>-</span>}
-        </React.Fragment>
+        </div>
       ))}
     </div>
   );
@@ -189,7 +191,7 @@ const SearchBar = ({
           </button>
         </div>
 
-        <div className='flex-grow flex items-center px-3 border border-gray-300 rounded focus-within:ring-2 focus-within:ring-red-500'>
+        <div className='flex-grow flex items-center px-2 border border-gray-300 rounded focus-within:ring-2 focus-within:ring-red-500 overflow-hidden'>
           {searchTerm && !isEditing ? (
             <ColoredSearchTerm
               searchTerm={searchTerm}
